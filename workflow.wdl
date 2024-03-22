@@ -1,11 +1,11 @@
 version 1.0
 
-workflow sort_VCFs {
+workflow filter_VCFs {
 
     meta {
-	author: "Shloka Negi edited by Phuwanat"
-        email: "shnegi@ucsc.edu"
-        description: "Sort VCF"
+	author: "Phuwanat Sakornsakolpat"
+        email: "phuwanat.sak@mahidol.edu"
+        description: "Filter VCF"
     }
 
      input {
@@ -13,18 +13,18 @@ workflow sort_VCFs {
     }
 
     scatter(this_file in vcf_files) {
-		call run_sorting { 
+		call run_filtering { 
 			input: vcf = this_file
 		}
 	}
 
     output {
-        Array[File] sorted_vcf = run_sorting.out_file
+        Array[File] filtered_vcf = run_filtering.out_file
     }
 
 }
 
-task run_sorting {
+task run_filtering {
     input {
         File vcf
         Int memSizeGB = 8
@@ -43,7 +43,7 @@ task run_sorting {
     >>>
 
     output {
-        File out_file = select_first(glob("*.sorted.vcf.gz"))
+        File out_file = select_first(glob("*.filtered.vcf.gz"))
     }
 
     runtime {
