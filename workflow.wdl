@@ -20,6 +20,7 @@ workflow filter_VCFs {
 
     output {
         Array[File] filtered_vcf = run_filtering.out_file
+        Array[File] filtered_tbi = run_filtering.out_file_tbi
     }
 
 }
@@ -35,15 +36,15 @@ task run_filtering {
     
     command <<<
 	tabix -p vcf ~{vcf}
-	bcftools view -i 'FILTER="PASS"' -r chr1,chr2,chr3,chr4,chr5,chr6,chr7,chr8,chr9,chr10,chr11,chr12,chr13,chr14,chr15,chr16,chr17,chr18,chr19,chr20,chr21,chr22,chrX -Oz -o ~{out_name}.included.vcf.gz ~{vcf}
-	tabix -p vcf ~{out_name}.included.vcf.gz
-	bcftools annotate -x INFO,FORMAT ~{out_name}.included.vcf.gz -Oz -o ~{out_name}.included2.vcf.gz
-	tabix -p vcf ~{out_name}.included2.vcf.gz
-	bcftools sort -m 2G -Oz -o ~{out_name}.sorted.vcf.gz ~{out_name}.included2.vcf.gz
+	bcftools view -i 'F_MISSING < 0.05' -o ~{out_name}.filtered0.vcf.gz ~{vcf}
+	tabix -p vcf ~{out_name}.filtered0.vcf.gz
+	bcftools sort -m 2G -Oz -o ~{out_name}.filtered.vcf.gz ~{out_name}.filtered0.vcf.gz
+	tabix -p vcf ~{out_name}.filtered.vcf.gz
     >>>
 
     output {
         File out_file = select_first(glob("*.filtered.vcf.gz"))
+        File out_file_tbi = select_first(glob("*.filtered.vcf.gz.tbi"))
     }
 
     runtime {
