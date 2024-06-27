@@ -36,7 +36,7 @@ task run_filtering {
     
     command <<<
 	tabix -p vcf ~{vcf}
-	bcftools view -i 'F_MISSING < 0.05' -o ~{out_name}.filtered0.vcf.gz ~{vcf}
+	bcftools view -i 'F_MISSING < 0.05 && FILTER="PASS"' -o ~{out_name}.filtered0.vcf.gz ~{vcf}
 	tabix -p vcf ~{out_name}.filtered0.vcf.gz
 	bcftools sort -m 2G -Oz -o ~{out_name}.filtered.vcf.gz ~{out_name}.filtered0.vcf.gz
 	tabix -p vcf ~{out_name}.filtered.vcf.gz
