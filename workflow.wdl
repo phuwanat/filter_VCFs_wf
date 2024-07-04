@@ -28,9 +28,9 @@ workflow filter_VCFs {
 task run_filtering {
     input {
         File vcf
-        Int memSizeGB = 16
+        Int memSizeGB = 8
         Int threadCount = 2
-        Int diskSizeGB = 5*round(size(vcf, "GB")) + 20
+        Int diskSizeGB = 8*round(size(vcf, "GB")) + 20
 	String out_name = basename(vcf, ".vcf.gz")
     }
     
